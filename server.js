@@ -3,12 +3,32 @@ import dotenv from "dotenv";
 dotenv.config();
 import cors from "cors";
 import adminRouter from "./src/routes/admin.routes.js";
-import connectCloudinary from "./src/config/connectCloudinary.js";
-import connectDB from "./src/config/connectDB.js";
+import mongoose from "mongoose";
 
-// Connect DB + Cloudinary
-await connectDB();
-await connectCloudinary();
+const app = express();
+
+// MongoDB connection handling
+let isConnected = false;
+
+async function connectDB() {
+  if (isConnected) return;
+
+  try {
+    await mongoose.connect(process.env.MONGO_URI);
+    console.log("MongoDB connected");
+    isConnected = true;
+  } catch (error) {
+    console.error("MongoDB connection error:", error);
+  }
+}
+
+// Connect DB before handling requests
+app.use(async (req, res, next) => {
+  if (!isConnected) {
+    await connectDB();
+  }
+  next();
+});
 
 // Allowed origins
 const allowedOrigins = [
@@ -16,35 +36,24 @@ const allowedOrigins = [
   "https://portfolio-ti1s.onrender.com",
 ];
 
-const app = express();
-
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
 app.use(
   cors({
     origin: allowedOrigins,
     credentials: true,
-    allowedHeaders: [
-      "Content-Type",
-      "Authorization",
-      "X-Requested-With",
-      "Accept",
-      "Origin",
-    ],
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
   })
 );
 
-// API Routes
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Routes
 app.use("/api/admin", adminRouter);
 
-app.use("/", (req, res) => {
-  res.send("API is running...");
+// Root route
+app.get("/", (req, res) => {
+  res.send("API is running on Vercel...");
 });
 
-// Start server
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+// ❗ Important: DO NOT use app.listen() — Vercel manages this automatically
+// ❗ Export the app as default for Vercel Serverless Function
+export default app;
