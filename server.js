@@ -31,7 +31,7 @@ app.use(async (req, res, next) => {
 });
 
 // Allowed origins
-const allowedOrigins = ["https://portfolio-frontend-psi-eight.vercel.app"];
+const allowedOrigins = ["https://portfolio-frontend-psi-eight.vercel.app","http://localhost:5173"];
 
 app.use(
   cors({
