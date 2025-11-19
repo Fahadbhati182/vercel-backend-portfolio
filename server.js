@@ -5,9 +5,6 @@ import cors from "cors";
 import adminRouter from "./src/routes/admin.routes.js";
 import connectCloudinary from "./src/config/connectCloudinary.js";
 import connectDB from "./src/config/connectDB.js";
-import path from "path";
-
-const __dirname = path.resolve();
 
 // Connect DB + Cloudinary
 await connectDB();
@@ -42,12 +39,8 @@ app.use(
 // API Routes
 app.use("/api/admin", adminRouter);
 
-// ✅ Serve frontend build
-app.use(express.static(path.join(__dirname, "frontend", "dist")));
-
-// ✅ FIX: Express v5 safe fallback route
-app.get(/.*/, (_, res) => {
-  res.sendFile(path.resolve(__dirname, "frontend", "dist", "index.html"));
+app.use("/", (req, res) => {
+  res.send("API is running...");
 });
 
 // Start server
