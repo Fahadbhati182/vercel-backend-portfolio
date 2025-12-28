@@ -26,8 +26,6 @@ export const uploadProject = async (req, res) => {
       liveLink,
     } = req.body;
 
-    
-
     if (!email || !password) {
       return res
         .status(400)
@@ -71,7 +69,6 @@ export const uploadProject = async (req, res) => {
     }
 
     const reqFiles = req.files;
-
 
     if (
       !reqFiles ||
@@ -385,7 +382,6 @@ export const deleteCertificates = async (req, res) => {
 export const sendMessageToAdmin = async (req, res) => {
   try {
     const { name, email, subject, message } = req.body;
-    
 
     if (!name || !email || !message) {
       return res.status(400).json({ message: "All fields are required" });

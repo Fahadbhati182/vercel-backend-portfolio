@@ -1,9 +1,13 @@
-import express from "express";
 import dotenv from "dotenv";
 dotenv.config();
+
+import express from "express";
 import cors from "cors";
 import adminRouter from "./src/routes/admin.routes.js";
 import mongoose from "mongoose";
+import connectCloudinary from "./src/config/connectCloudinary.js";
+
+await connectCloudinary();
 
 const app = express();
 
@@ -31,7 +35,10 @@ app.use(async (req, res, next) => {
 });
 
 // Allowed origins
-const allowedOrigins = ["https://portfolio-frontend-psi-eight.vercel.app","http://localhost:5173"];
+const allowedOrigins = [
+  "https://portfolio-frontend-psi-eight.vercel.app",
+  "http://localhost:5173",
+];
 
 app.use(
   cors({
@@ -54,3 +61,4 @@ app.get("/", (req, res) => {
 // ❗ Important: DO NOT use app.listen() — Vercel manages this automatically
 // ❗ Export the app as default for Vercel Serverless Function
 export default app;
+
